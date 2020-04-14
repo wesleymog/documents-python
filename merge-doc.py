@@ -1,6 +1,7 @@
 from __future__ import print_function
 import pickle
 import os.path
+import datetime
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -9,7 +10,7 @@ from google.auth.transport.requests import Request
 SCOPES = ['https://www.googleapis.com/auth/documents']
 
 # The ID of a sample document.
-DOCUMENT_ID = '195j9eDD3ccgjQRttHhJPymLJUCOUjs-jmwTrekvdjFE'
+DOCUMENT_ID = '1xxpl8MBLvG2HwIxuLGHNN-c9eIl5I1oGnzLS9IkrvIw'
 
 def main():
     """Shows basic usage of the Docs API.
@@ -36,7 +37,7 @@ def main():
 
     service = build('docs', 'v1', credentials=creds)
 
-    createdocs(service)
+    mergedocs(service)
 
 def createdocs(service):
     title = 'My document'
@@ -49,27 +50,37 @@ def createdocs(service):
         doc.get('title')))
 
 def mergedocs(service):
-    customer_name = 'Alice'
-    date = datetime.datetime.now().strftime("%y/%m/%d")
-
+    emission_date = datetime.datetime.now().strftime("%y/%m/%d")
+    text1 = "asssssssssssssssssaaaaaaaaaaaaaaa dsaksçsaça"
+    text2 = "asssssssssssssssssaaaaaaaaaaaaaaa dsaksçsaça"
+    text3 = "asssssssssssssssssaaaaaaaaaaaaaaa dsaksçsaça"
+    document_id = DOCUMENT_ID
     requests = [
-         {
-            'replaceAllText': {
-                'containsText': {
-                    'text': '{{customer-name}}',
-                    'matchCase':  'true'
-                },
-                'replaceText': customer_name,
-            }}, {
-            'replaceAllText': {
-                'containsText': {
-                    'text': '{{date}}',
-                    'matchCase':  'true'
-                },
-                'replaceText': str(date),
-            }
-        }
-    ]
+                    {
+                        'insertText': {
+                            'location': {
+                                'index': 412,
+                            },
+                            'text': text1
+                        }
+                    },
+                            {
+                        'insertText': {
+                            'location': {
+                                'index': 550,
+                            },
+                            'text': text2
+                        }
+                    },
+                            {
+                        'insertText': {
+                            'location': {
+                                'index': 1000,
+                            },
+                            'text': text3
+                        }
+                    },
+                ]
 
     result = service.documents().batchUpdate(
         documentId=document_id, body={'requests': requests}).execute()
