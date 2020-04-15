@@ -5,6 +5,7 @@ import datetime
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from gdoctableapppy import gdoctableapp
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/documents']
@@ -13,13 +14,7 @@ SCOPES = ['https://www.googleapis.com/auth/documents']
 DOCUMENT_ID = '1xxpl8MBLvG2HwIxuLGHNN-c9eIl5I1oGnzLS9IkrvIw'
 
 def main():
-    """Shows basic usage of the Docs API.
-    Prints the title of a sample document.
-    """
     creds = None
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
@@ -37,7 +32,14 @@ def main():
 
     service = build('docs', 'v1', credentials=creds)
 
-    mergedocs(service)
+    resource = {
+    "oauth2": creds,
+    "documentId": DOCUMENT_ID,
+    "tableIndex": 0,
+    "values": [["a1", "b1"], ["a2", "b2"], ["a3", "b3", "c3"]]
+    }
+    res = gdoctableapp.SetValues(resource)  # You can see the retrieved responses from Docs API.
+    print(res)
 
 def createdocs(service):
     title = 'My document'
@@ -84,6 +86,8 @@ def mergedocs(service):
 
     result = service.documents().batchUpdate(
         documentId=document_id, body={'requests': requests}).execute()
+
+
 
 if __name__ == '__main__':
     main()
